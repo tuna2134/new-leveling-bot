@@ -17,7 +17,7 @@ class MyClient(discord.Client):
         
     async def level_up_check(self, message, data):
         user, level, exp = data
-        if exp =< (level * 3):
+        if exp > level * 3:
             level += 1
             await self.db.execute("UPDATE level SET level=?, exp=? WHERE=?", (level, exp, user))
             await self.send_level(message, level)
@@ -35,9 +35,10 @@ class MyClient(discord.Client):
             await self.send_level(message, 1)
             
 class Level_Tree(app_commands.Group):
-    def __init__(self, db):
+    def __init__(self, client):
         super().__init__(name="level", description="level group command")
-        self.db = db
+        self.db = client.db
+        self.client = client
     
     @app_commands.command(description="check someone level")
     async def check(self, interaction, user: discord.User=None):
