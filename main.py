@@ -35,13 +35,32 @@ class MyClient(discord.Client):
             await self.send_level(message, 1)
             
 class Level_Tree(app_commands.Group):
-    def __init__(self):
+    def __init__(self, db):
         super().__init__(name="level", description="level group command")
+        self.db = db
     
     @app_commands.command(description="check someone level")
-    async def check(self, interaction, user: discord.User):
-        pass
-    
+    async def check(self, interaction, user: discord.User=None):
+        data = await self.db.execute("SELECT * FROM level WHERE user=?", (user.id or interaction.author.id))
+        if data is None:
+            await interaction.response.send_message("そのユーザーは見つかりません")
+        else:
+            _, level, exp = data
+            embed = discord.Embed(title="レベル情報")
+            embed.add_field(name="レベル", value=level)
+            await interaction.response.send_message(embed=embed)
+            
+    async def show_rank(self, user):
+        ranks = []
+        cursor = await self.db.execute("SELECT * FROM level")
+        for user, level, _ in (await cursor.fetchall()):
+            ranks.append((user, level))
+        return sorted(ranks, key=lambda k: k[1])
+            
+    @app_commands.command(description="Check rank")
+    async def rank(self, interaction):
+        rank = "\n".join("{}. {}".format(i, self.client.get_user(data[1]).mention) for i, data in (await self.show_rank()))
+        await interaction.response.send_message(embed=discord.Embed(title="ランキング", description=rank))
     
 client = MyClient(intents=discord.Intents.all())
 
