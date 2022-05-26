@@ -17,7 +17,7 @@ class MyClient(discord.Client):
         
     async def level_up_check(self, message, data):
         user, level, exp = data
-        if exp =< level * 3:
+        if exp =< (level * 3):
             level += 1
             await self.db.execute("UPDATE level SET level=?, exp=? WHERE=?", (level, exp, user))
             await self.send_level(message, level)
