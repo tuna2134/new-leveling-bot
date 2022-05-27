@@ -11,6 +11,7 @@ else:
 
 
 class MyClient(discord.Client):
+    db = None
     
     async def setup_hook(self):
         self.db = await connect("main.db")
