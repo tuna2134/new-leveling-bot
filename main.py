@@ -41,7 +41,7 @@ class MyClient(discord.Client):
             await self.db.execute("INSERT INTO level VALUES(?, ?, ?)", (message.author.id, 1, 1))
             await self.send_level(message, 1)
             
-class Level_Tree(app_commands.Group):
+class LevelTree(app_commands.Group):
     def __init__(self, client):
         super().__init__(name="level", description="level group command")
         self.db = client.db
@@ -71,7 +71,10 @@ class Level_Tree(app_commands.Group):
         await interaction.response.send_message(embed=discord.Embed(title="ランキング", description=rank))
     
 client = MyClient(intents=discord.Intents.all())
-with open("client.json", "r") as f:
+tree = app_commands.CommandTree(client)
+tree.add_command(LevelTree(client))
+
+with open("config.json", "r") as f:
     data = orjson.load(f)
 
 
