@@ -1,6 +1,7 @@
 import discord
 from aiosqlite import connect
 from discord import app_commands
+import orjson
 try:
     import uvloop
 except ImportError:
@@ -70,6 +71,8 @@ class Level_Tree(app_commands.Group):
         await interaction.response.send_message(embed=discord.Embed(title="ランキング", description=rank))
     
 client = MyClient(intents=discord.Intents.all())
+with open("client.json", "r") as f:
+    data = orjson.load(f)
 
 
-client.run()
+client.run(data["token"])
