@@ -1,6 +1,12 @@
 import discord
 from aiosqlite import connect
 from discord import app_commands
+try:
+    import uvloop
+except ImportError:
+    pass
+else:
+    uvloop.install()
 
 
 class MyClient(discord.Client):
