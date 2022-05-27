@@ -76,7 +76,7 @@ tree = app_commands.CommandTree(client)
 tree.add_command(LevelTree(client))
 
 with open("config.json", "r") as f:
-    data = orjson.load(f)
+    data = orjson.loads(f.read())
 
 
 client.run(data["token"])
